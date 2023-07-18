@@ -96,16 +96,49 @@ public class Trie {
     }
 
     // Return a list of all the keys that are in the trie
-    public List<String> collectKeys(){
+    public List<String> collectKeys() {
         List<String> allKeys = new ArrayList<>();
-        // TODO
+        collectKeysHelper(root, "", allKeys);
         return allKeys;
     }
 
+    private void collectKeysHelper(TrieNode node, String prefix, List<String> keys) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.isKey) {
+            keys.add(prefix);
+        }
+
+        for (char c = 0; c < CHARACTER_SET_SIZE; c++) {
+            TrieNode child = node.children[c];
+            if (child != null) {
+                collectKeysHelper(child, prefix + c, keys);
+            }
+        }
+    }
+
     // Return a list of all the keys that are in the trie
-    public List<String> keysWithPrefix(String prefix){
+    public List<String> keysWithPrefix(String prefix) {
         List<String> prefixKeys = new ArrayList<>();
-        // TODO
+        TrieNode prefixNode = findPrefixNode(prefix);
+        collectKeysHelper(prefixNode, prefix, prefixKeys);
         return prefixKeys;
+    }
+
+    private TrieNode findPrefixNode(String prefix) {
+        int length = prefix.length();
+        TrieNode node = root;
+
+        for (int i = 0; i < length; i++) {
+            char currentLetter = prefix.charAt(i);
+            if (node.children[currentLetter] == null) {
+                return null;
+            }
+            node = node.children[currentLetter];
+        }
+
+        return node;
     }
 }

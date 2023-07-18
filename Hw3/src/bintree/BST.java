@@ -169,10 +169,28 @@ public class BST<T extends Comparable> {
     }
 
     // Find all the values in the BST between lowerBound and upperBound inclusive
-    public List<T> rangeQuery(T lowerBound, T upperBound){
+    public List<T> rangeQuery(T lowerBound, T upperBound) {
         List<T> values = new ArrayList<>();
-        // TODO
+        rangeQuery(root, lowerBound, upperBound, values);
         return values;
+    }
+
+    private void rangeQuery(BSTNode<T> node, T lowerBound, T upperBound, List<T> values) {
+        if (node == null) {
+            return;
+        }
+
+        if (node.item.compareTo(lowerBound) > 0) {
+            rangeQuery(node.left, lowerBound, upperBound, values);
+        }
+
+        if (node.item.compareTo(lowerBound) >= 0 && node.item.compareTo(upperBound) <= 0) {
+            values.add(node.item);
+        }
+
+        if (node.item.compareTo(upperBound) < 0) {
+            rangeQuery(node.right, lowerBound, upperBound, values);
+        }
     }
 
     /*

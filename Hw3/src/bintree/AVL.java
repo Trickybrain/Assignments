@@ -48,13 +48,49 @@ public class AVL<T extends Comparable> extends BST {
     }
 
     // Perform a left rotation around nodeToRotate
-    public void rotateLeft(BSTNode nodeToRotate){
-        // TODO
+    public void rotateLeft(BSTNode<T> nodeToRotate) {
+        BSTNode<T> pivot = nodeToRotate.right;
+        nodeToRotate.right = pivot.left;
+        if (pivot.left != null) {
+            pivot.left.parent = nodeToRotate;
+        }
+        pivot.parent = nodeToRotate.parent;
+        if (nodeToRotate.parent == null) {
+            root = pivot;
+        } else if (nodeToRotate == nodeToRotate.parent.left) {
+            nodeToRotate.parent.left = pivot;
+        } else {
+            nodeToRotate.parent.right = pivot;
+        }
+        pivot.left = nodeToRotate;
+        nodeToRotate.parent = pivot;
+
+        // Update heights
+        nodeToRotate.height = height(nodeToRotate);
+        pivot.height = height(pivot);
     }
 
     // Perform a right rotation around nodeToRotate
-    public void rotateRight(BSTNode nodeToRotate){
-        //TODO
+    public void rotateRight(BSTNode<T> nodeToRotate) {
+        BSTNode<T> pivot = nodeToRotate.left;
+        nodeToRotate.left = pivot.right;
+        if (pivot.right != null) {
+            pivot.right.parent = nodeToRotate;
+        }
+        pivot.parent = nodeToRotate.parent;
+        if (nodeToRotate.parent == null) {
+            root = pivot;
+        } else if (nodeToRotate == nodeToRotate.parent.right) {
+            nodeToRotate.parent.right = pivot;
+        } else {
+            nodeToRotate.parent.left = pivot;
+        }
+        pivot.right = nodeToRotate;
+        nodeToRotate.parent = pivot;
+
+        // Update heights
+        nodeToRotate.height = height(nodeToRotate);
+        pivot.height = height(pivot);
     }
 
     /*
@@ -62,9 +98,28 @@ public class AVL<T extends Comparable> extends BST {
         When this function is called by the insert method, the node passed in is the
         node that was most recently inserted.
      */
-    public BSTNode findLowestUnBalancedNode(BSTNode currentNode){
-        // TODO
-        return null;
+    public BSTNode<T> findLowestUnBalancedNode(BSTNode<T> currentNode) {
+        if (currentNode == null) {
+            return null;
+        }
+
+        int skew = skew(currentNode);
+
+        if (skew > 1 || skew < -1) {
+            // The current node is unbalanced, so return it
+            return currentNode;
+        }
+
+        // Recursively check the left and right subtrees
+        BSTNode<T> leftNode = findLowestUnBalancedNode(currentNode.left);
+        BSTNode<T> rightNode = findLowestUnBalancedNode(currentNode.right);
+
+        // Return the lowest unbalanced node found between left and right subtrees
+        if (leftNode != null) {
+            return leftNode;
+        } else {
+            return rightNode;
+        }
     }
 
     // Maintain the subtree properties after a node is inserted
